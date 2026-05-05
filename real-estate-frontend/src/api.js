@@ -2,7 +2,6 @@ import axios from "axios";
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
 });
 
 API.interceptors.request.use((req) => {
@@ -14,6 +13,8 @@ API.interceptors.request.use((req) => {
 
   return req;
 });
+
+export default API;
 
 API.interceptors.response.use(
   (response) => response,
