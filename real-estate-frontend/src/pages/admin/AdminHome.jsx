@@ -8,6 +8,7 @@ function AdminHome() {
     enquiries: 0,
     leads: 0,
   });
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -16,7 +17,8 @@ function AdminHome() {
         const res = await API.get("/admin/stats");
         setStats(res.data);
       } catch (error) {
-        alert(error.response?.data?.message || "Failed to fetch dashboard stats");
+        console.error("Admin stats error:", error);
+        alert(error.response?.data?.message || "Failed to load admin dashboard");
       } finally {
         setLoading(false);
       }
@@ -26,19 +28,29 @@ function AdminHome() {
   }, []);
 
   return (
-    <div className="admin-pro-page">
-      <div className="admin-pro-title-row">
-        <div>
-          <h1>Admin Dashboard</h1>
-          <p>Platform overview, users, listings, enquiries, and leads.</p>
-        </div>
-      </div>
+    <div>
+      <h1>Dashboard</h1>
 
       <div className="dashboard-cards">
-        <div className="card"><h3>Total Users</h3><p>{loading ? "..." : stats.users}</p></div>
-        <div className="card"><h3>Total Properties</h3><p>{loading ? "..." : stats.properties}</p></div>
-        <div className="card"><h3>Total Enquiries</h3><p>{loading ? "..." : stats.enquiries}</p></div>
-        <div className="card"><h3>Total Leads</h3><p>{loading ? "..." : stats.leads}</p></div>
+        <div className="card">
+          <h3>Total Users</h3>
+          <p>{loading ? "..." : stats.users}</p>
+        </div>
+
+        <div className="card">
+          <h3>Total Properties</h3>
+          <p>{loading ? "..." : stats.properties}</p>
+        </div>
+
+        <div className="card">
+          <h3>Total Enquiries</h3>
+          <p>{loading ? "..." : stats.enquiries}</p>
+        </div>
+
+        <div className="card">
+          <h3>Total Leads</h3>
+          <p>{loading ? "..." : stats.leads}</p>
+        </div>
       </div>
     </div>
   );
