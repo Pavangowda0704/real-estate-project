@@ -5,22 +5,25 @@ import { admin } from "../middleware/adminMiddleware.js";
 import User from "../models/User.js";
 import Property from "../models/Property.js";
 import Enquiry from "../models/Enquiry.js";
+import Lead from "../models/Lead.js";
 
 const router = express.Router();
 
 // GET ADMIN STATS
 router.get("/stats", protect, admin, async (req, res) => {
   try {
-    const users = await User.countDocuments();
-    const properties = await Property.countDocuments();
-    const enquiries = await Enquiry.countDocuments();
+    const [users, properties, enquiries, leads] = await Promise.all([
+      User.countDocuments(),
+      Property.countDocuments(),
+      Enquiry.countDocuments(),
+      Lead.countDocuments(),
+    ]);
 
-    res.json({ users, properties, enquiries });
+    res.json({ users, properties, enquiries, leads });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch stats" });
   }
 });
-
 // GET ALL USERS
 router.get("/users", protect, admin, async (req, res) => {
   try {
