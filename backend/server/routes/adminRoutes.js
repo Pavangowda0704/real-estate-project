@@ -21,6 +21,7 @@ router.get("/stats", protect, admin, async (req, res) => {
 
     res.json({ users, properties, enquiries, leads });
   } catch (error) {
+    console.error("Admin stats error:", error);
     res.status(500).json({ message: "Failed to fetch stats" });
   }
 });
