@@ -1,26 +1,68 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  password: String,
-  role: {
-    type: String,
-    enum: ["buyer", "seller", "agent", "admin"],
-    default: "buyer",
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+      lowercase: true,
+      trim: true,
+    },
+
+    password: {
+      type: String,
+      required: true,
+      minlength: 6,
+    },
+
+    role: {
+      type: String,
+      enum: ["buyer", "seller", "agent", "admin"],
+      default: "buyer",
+    },
+
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
-});
+  { timestamps: true }
+);
 
-// Hash password
-userSchema.pre("save", async function () {
-  if (!this.isModified("password")) return;
+// Hash password before saving
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
+
   this.password = await bcrypt.hash(this.password, 10);
+  next();
 });
 
-// Compare password
-userSchema.methods.matchPassword = async function (entered) {
-  return await bcrypt.compare(entered, this.password);
+// Compare entered password with hashed password
+userSchema.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// Generate secure reset password token
+userSchema.methods.getResetPasswordToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  this.resetPasswordExpire = new Date(Date.now() + 15 * 60 * 1000);
+
+  return resetToken;
 };
 
 export default mongoose.model("User", userSchema);
