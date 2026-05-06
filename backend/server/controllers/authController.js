@@ -15,23 +15,35 @@ export const registerUser = async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "Name, email and password are required" });
+      return res.status(400).json({
+        message: "Name, email and password are required",
+      });
     }
 
-    const exists = await User.findOne({ email: email.toLowerCase().trim() });
+    if (password.length < 6) {
+      return res.status(400).json({
+        message: "Password must be at least 6 characters long",
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const exists = await User.findOne({ email: normalizedEmail });
 
     if (exists) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({
+        message: "This email is already registered. Please login instead.",
+      });
     }
 
     const user = await User.create({
-      name,
-      email: email.toLowerCase().trim(),
+      name: name.trim(),
+      email: normalizedEmail,
       password,
       role: "buyer",
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
@@ -39,8 +51,17 @@ export const registerUser = async (req, res) => {
       token: generateToken(user._id, user.role),
     });
   } catch (error) {
-    console.error("Register error:", error);
-    res.status(500).json({ message: "Registration failed" });
+    console.error("REGISTER ERROR:", error);
+
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: "This email is already registered. Please login instead.",
+      });
+    }
+
+    return res.status(500).json({
+      message: error.message || "Registration failed",
+    });
   }
 };
 
