@@ -129,26 +129,24 @@ export const forgotPassword = async (req, res) => {
     `;
 
     try {
-      await sendEmail({
-        to: user.email,
-        subject: "RealEstatePro Password Reset",
-        html,
-      });
+  await sendEmail({
+    to: user.email,
+    subject: "RealEstatePro Password Reset",
+    html,
+  });
 
-      res.json({
-        message: "If this email exists, password reset instructions have been sent.",
-      });
-    } catch (emailError) {
-      console.error("Email error:", emailError);
+  return res.json({
+    message: "If this email exists, password reset instructions have been sent.",
+  });
+} catch (emailError) {
+  console.error("Email error:", emailError);
 
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpire = undefined;
-      await user.save({ validateBeforeSave: false });
-
-      res.status(500).json({
-        message: "Email could not be sent. Please check email configuration.",
-      });
-    }
+  // Do not break app because SMTP failed
+  return res.json({
+    message:
+      "Reset link generated, but email delivery is temporarily unavailable. Please contact admin.",
+  });
+}
   } catch (error) {
     console.error("Forgot password error:", error);
     res.status(500).json({ message: "Forgot password failed" });
