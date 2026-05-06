@@ -46,18 +46,19 @@ function Register() {
 
     const name = formData.name.trim();
     const email = formData.email.trim().toLowerCase();
+    const password = formData.password;
 
     if (name.length < 3) {
       setError("Name must be at least 3 characters long.");
       return;
     }
 
-    if (formData.password.length < 6) {
+    if (password.length < 6) {
       setError("Password must be at least 6 characters long.");
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
+    if (password !== formData.confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
@@ -68,7 +69,7 @@ function Register() {
       const payload = {
         name,
         email,
-        password: formData.password,
+        password,
         role: "buyer",
       };
 
@@ -77,9 +78,12 @@ function Register() {
       alert("Registration successful. Please login.");
       navigate("/login");
     } catch (error) {
+      console.error("Register error:", error);
+
       setError(
         error.response?.data?.message ||
           error.response?.data?.error ||
+          error.message ||
           "Registration failed. Please try again."
       );
     } finally {
@@ -90,7 +94,7 @@ function Register() {
   return (
     <section className="auth-pro-page auth-register-page">
       <div className="auth-pro-shell">
-        <div className="auth-pro-info">
+        <div className="auth-pro-info auth-visual-panel">
           <span className="auth-pro-kicker">Buyer Registration</span>
 
           <h1>Create your buyer account and start finding homes.</h1>
@@ -138,7 +142,6 @@ function Register() {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                autoComplete="name"
               />
             </div>
 
@@ -152,7 +155,6 @@ function Register() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                autoComplete="email"
               />
             </div>
 
@@ -166,14 +168,12 @@ function Register() {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                autoComplete="new-password"
               />
 
               <button
                 type="button"
                 className="auth-eye-btn"
                 onClick={() => setShowPassword((prev) => !prev)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
@@ -189,16 +189,12 @@ function Register() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
-                autoComplete="new-password"
               />
 
               <button
                 type="button"
                 className="auth-eye-btn"
                 onClick={() => setShowConfirmPassword((prev) => !prev)}
-                aria-label={
-                  showConfirmPassword ? "Hide password" : "Show password"
-                }
               >
                 {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
