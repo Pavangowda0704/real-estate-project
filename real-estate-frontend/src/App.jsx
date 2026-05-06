@@ -31,6 +31,8 @@ import AdminProperties from "./pages/admin/AdminProperties";
 import AdminEnquiries from "./pages/admin/AdminEnquiries";
 import AdminLeads from "./pages/admin/AdminLeads";
 
+import ResetPassword from "./pages/ResetPassword";
+
 function FloatingWrapper({ user }) {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
@@ -89,6 +91,7 @@ function App() {
         {/* AUTH ROUTES */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         {/* DASHBOARD */}
         <Route
