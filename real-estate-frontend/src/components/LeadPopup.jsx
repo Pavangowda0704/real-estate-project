@@ -2,6 +2,8 @@ import { useState } from "react";
 import API from "../api";
 
 function LeadPopup({ onClose }) {
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     purpose: "buy",
     name: "",
@@ -23,118 +25,140 @@ function LeadPopup({ onClose }) {
   const submitLead = async (e) => {
     e.preventDefault();
 
+    setLoading(true);
+
     try {
       await API.post("/leads", formData);
-      alert("Request submitted successfully. Our team will contact you soon.");
+
+      alert(
+        "Request submitted successfully. Our team will contact you soon."
+      );
+
       onClose();
     } catch (error) {
-      alert(error.response?.data?.message || "Failed to submit request");
+      alert(
+        error.response?.data?.message ||
+          "Failed to submit request"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="lead-popup-overlay-final">
-      <div className="lead-popup-box-final">
-        <button className="lead-popup-close-final" onClick={onClose}>
+    <div className="startup-lead-overlay">
+      <div className="startup-lead-box">
+        <button
+          className="startup-lead-close"
+          onClick={onClose}
+        >
           ×
         </button>
 
-        <div className="lead-popup-header-final">
+        <div className="startup-lead-header">
           <span>🏡</span>
-          <h2>Buy / Sell Property Request</h2>
-          <p>No login required. Admin will contact you directly.</p>
+
+          <h2>Property Requirement</h2>
+
+          <p>
+            Tell us what you're looking for and our
+            team will contact you.
+          </p>
         </div>
 
-        <form onSubmit={submitLead} className="lead-popup-form-final">
-          <label>I want to</label>
-          <select name="purpose" value={formData.purpose} onChange={handleChange}>
+        <form
+          onSubmit={submitLead}
+          className="startup-lead-form"
+        >
+          <select
+            name="purpose"
+            value={formData.purpose}
+            onChange={handleChange}
+          >
             <option value="buy">Buy Property</option>
             <option value="sell">Sell Property</option>
           </select>
 
-          <div className="lead-popup-grid-final">
-            <div>
-              <label>Full Name *</label>
-              <input
-                name="name"
-                placeholder="Your name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
+          <div className="startup-lead-grid">
+            <input
+              name="name"
+              placeholder="Full Name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
 
-            <div>
-              <label>Phone Number *</label>
-              <input
-                name="phone"
-                placeholder="Phone number"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <input
+              name="phone"
+              placeholder="Phone Number"
+              value={formData.phone}
+              onChange={handleChange}
+              required
+            />
           </div>
 
-          <div className="lead-popup-grid-final">
-            <div>
-              <label>Email</label>
-              <input
-                name="email"
-                placeholder="Email optional"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
+          <div className="startup-lead-grid">
+            <input
+              name="email"
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={handleChange}
+            />
 
-            <div>
-              <label>Location *</label>
-              <input
-                name="location"
-                placeholder="Location"
-                value={formData.location}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <input
+              name="location"
+              placeholder="Preferred Location"
+              value={formData.location}
+              onChange={handleChange}
+              required
+            />
           </div>
 
-          <div className="lead-popup-grid-final">
-            <div>
-              <label>Budget / Expected Price</label>
-              <input
-                name="budget"
-                placeholder="Example: ₹50L - ₹80L"
-                value={formData.budget}
-                onChange={handleChange}
-              />
-            </div>
+          <div className="startup-lead-grid">
+            <input
+              name="budget"
+              placeholder="Budget"
+              value={formData.budget}
+              onChange={handleChange}
+            />
 
-            <div>
-              <label>Property Type</label>
-              <select
-                name="propertyType"
-                value={formData.propertyType}
-                onChange={handleChange}
-              >
-                <option value="">Select type</option>
-                <option value="Apartment">Apartment</option>
-                <option value="Villa">Villa</option>
-                <option value="Plot">Plot</option>
-                <option value="Commercial">Commercial</option>
-              </select>
-            </div>
+            <select
+              name="propertyType"
+              value={formData.propertyType}
+              onChange={handleChange}
+            >
+              <option value="">
+                Property Type
+              </option>
+
+              <option value="Apartment">
+                Apartment
+              </option>
+
+              <option value="Villa">
+                Villa
+              </option>
+
+              <option value="Plot">Plot</option>
+
+              <option value="Commercial">
+                Commercial
+              </option>
+            </select>
           </div>
 
-          <label>Message</label>
           <textarea
             name="message"
-            placeholder="Tell us your requirement..."
+            placeholder="Additional requirements..."
             value={formData.message}
             onChange={handleChange}
           />
 
-          <button type="submit">Submit Request</button>
+          <button type="submit">
+            {loading
+              ? "Submitting..."
+              : "Submit Requirement"}
+          </button>
         </form>
       </div>
     </div>

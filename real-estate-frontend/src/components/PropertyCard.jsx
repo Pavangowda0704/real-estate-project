@@ -1,5 +1,11 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import {
+  FaHeart,
+  FaRegHeart,
+  FaMapMarkerAlt,
+  FaExchangeAlt,
+} from "react-icons/fa";
 
 function PropertyCard({ property }) {
   const [isFav, setIsFav] = useState(false);
@@ -18,7 +24,9 @@ function PropertyCard({ property }) {
     let favs = JSON.parse(localStorage.getItem("favorites")) || [];
 
     if (isFav) {
-      favs = favs.filter((item) => (item._id || item.id) !== propertyId);
+      favs = favs.filter(
+        (item) => (item._id || item.id) !== propertyId
+      );
     } else {
       favs.push(property);
     }
@@ -28,7 +36,8 @@ function PropertyCard({ property }) {
   };
 
   const handleCompare = (property) => {
-    let compareList = JSON.parse(localStorage.getItem("compare")) || [];
+    let compareList =
+      JSON.parse(localStorage.getItem("compare")) || [];
 
     const currentPropertyId = property._id || property.id;
 
@@ -47,48 +56,75 @@ function PropertyCard({ property }) {
     }
 
     compareList.push(property);
-    localStorage.setItem("compare", JSON.stringify(compareList));
+
+    localStorage.setItem(
+      "compare",
+      JSON.stringify(compareList)
+    );
 
     alert("Added to compare");
   };
 
   return (
-    <div className="property-card">
-      <button className="fav-btn" onClick={toggleFavorite}>
-        {isFav ? "❤️" : "🤍"}
-      </button>
+    <div className="startup-card">
+      <div className="startup-card-image-wrapper">
+        <img
+          src={
+            property.image ||
+            "https://via.placeholder.com/400x250?text=No+Image"
+          }
+          alt={property.title}
+          className="startup-card-image"
+        />
 
-      <div className={`badge ${property.type === "Rent" ? "rent" : "buy"}`}>
-        {property.type}
+        <button
+          className="startup-fav-btn"
+          onClick={toggleFavorite}
+        >
+          {isFav ? <FaHeart /> : <FaRegHeart />}
+        </button>
+
+        <div
+          className={`startup-badge ${
+            property.type === "Rent"
+              ? "startup-rent"
+              : "startup-buy"
+          }`}
+        >
+          For {property.type}
+        </div>
       </div>
 
-      <img
-        src={
-          property.image ||
-          "https://via.placeholder.com/400x250?text=No+Image"
-        }
-        alt={property.title}
-      />
-
-      <div className="property-info">
+      <div className="startup-card-body">
         <h3>{property.title}</h3>
-        <p className="price">{property.price}</p>
-        <p>{property.location}</p>
 
-        <div className="property-meta">
-          <span>{property.bhk}</span>
-          <span>{property.area}</span>
+        <div className="startup-price">
+          {property.price}
         </div>
 
-        <div className="card-actions">
-          <Link to={`/property/${propertyId}`} className="details-btn">
+        <p className="startup-location">
+          <FaMapMarkerAlt />
+          {property.location}
+        </p>
+
+        <div className="startup-meta">
+          <span>{property.bhk || "BHK"}</span>
+          <span>{property.area || "Area"}</span>
+        </div>
+
+        <div className="startup-actions">
+          <Link
+            to={`/property/${propertyId}`}
+            className="startup-details-btn"
+          >
             View Details
           </Link>
 
           <button
-            className="compare-btn"
+            className="startup-compare-btn"
             onClick={() => handleCompare(property)}
           >
+            <FaExchangeAlt />
             Compare
           </button>
         </div>

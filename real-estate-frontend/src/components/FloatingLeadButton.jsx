@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FaHeadset } from "react-icons/fa";
 import LeadPopup from "./LeadPopup";
 
 function FloatingLeadButton() {
@@ -7,12 +8,13 @@ function FloatingLeadButton() {
   return (
     <>
       {!open && (
-        <button className="floating-lead-btn" onClick={() => setOpen(true)}>
-          <span>🏠</span>
-          <div>
-            <strong>Need Property Help?</strong>
-            <small>Buy / Sell Request</small>
-          </div>
+        <button
+          className="floating-help-pro"
+          onClick={() => setOpen(true)}
+          aria-label="Get property assistance"
+          title="Get property assistance"
+        >
+          <FaHeadset />
         </button>
       )}
 

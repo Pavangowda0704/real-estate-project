@@ -27,14 +27,17 @@ function PropertyDetails() {
   const [emiResult, setEmiResult] = useState(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     const fetchProperty = async () => {
       try {
         const res = await API.get(`/properties/${id}`);
+
         setProperty(res.data);
-        document.title = `${res.data.title} | RealEstate`;
+
+        document.title = `${res.data.title} | RealEstatePro`;
       } catch (error) {
         console.log(error);
-        document.title = "Property Not Found | RealEstate";
       }
     };
 
@@ -52,13 +55,15 @@ function PropertyDetails() {
   }, [id]);
 
   if (!property) {
-  return (
-    <div className="section">
-      <h2>Loading Property...</h2>
-      <p>If this stays here, check that the URL contains MongoDB _id.</p>
-    </div>
-  );
-}
+    return (
+      <div className="property-loading">
+        <div className="property-loading-box">
+          <h2>Loading Property...</h2>
+          <p>Please wait while we fetch property details.</p>
+        </div>
+      </div>
+    );
+  }
 
   const galleryImages = [
     property.image,
@@ -80,7 +85,11 @@ function PropertyDetails() {
   };
 
   const similarProperties = allProperties
-    .filter((item) => item._id !== property._id && item.type === property.type)
+    .filter(
+      (item) =>
+        item._id !== property._id &&
+        item.type === property.type
+    )
     .slice(0, 3);
 
   const handleEnquiryChange = (e) => {
@@ -93,12 +102,14 @@ function PropertyDetails() {
   const handleEnquirySubmit = async (e) => {
     e.preventDefault();
 
-    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    const loggedInUser = JSON.parse(
+      localStorage.getItem("loggedInUser")
+    );
 
     if (!loggedInUser) {
-  setShowLoginPopup(true);
-  return;
-}
+      setShowLoginPopup(true);
+      return;
+    }
 
     try {
       await API.post("/enquiries", {
@@ -142,7 +153,9 @@ function PropertyDetails() {
     const months = years * 12;
 
     const emi =
-      (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
+      (principal *
+        monthlyRate *
+        Math.pow(1 + monthlyRate, months)) /
       (Math.pow(1 + monthlyRate, months) - 1);
 
     const totalPayment = emi * months;
@@ -156,77 +169,96 @@ function PropertyDetails() {
   };
 
   return (
-    <div className="section property-details-page">
-      <div className="details-top">
-        <div>
-          <span
-            className={`property-tag ${
-              property.type === "Rent" ? "rent" : "buy"
+    <div className="startup-details-page">
+      <section className="startup-hero-details">
+        <div className="startup-hero-left">
+          <div
+            className={`startup-type-badge ${
+              property.type === "Rent"
+                ? "startup-rent"
+                : "startup-buy"
             }`}
           >
             For {property.type}
-          </span>
+          </div>
 
-          <h2>{property.title}</h2>
-          <p className="details-location">📍 {property.location}</p>
-        </div>
+          <h1>{property.title}</h1>
 
-        <div className="details-price-box">
-          <h3>{property.price}</h3>
-          <p>
-            {property.bhk} • {property.area}
+          <p className="startup-location">
+            📍 {property.location}
           </p>
 
-          <div className="property-stats">
-            <span>👁️ 1,245 Views</span>
-            <span>📅 Posted 3 days ago</span>
-            <span>✅ Verified</span>
+          <div className="startup-detail-tags">
+            <span>{property.bhk}</span>
+            <span>{property.area}</span>
+            <span>Verified</span>
+            <span>Ready to Move</span>
           </div>
         </div>
-      </div>
 
-      <div className="image-slider">
-        <button className="slider-btn left" onClick={prevImage}>
-          ❮
-        </button>
+        <div className="startup-price-box">
+          <h2>{property.price}</h2>
 
-        <img
-          src={galleryImages[currentImage]}
-          alt="Property"
-          className="slider-image"
-        />
+          <div className="startup-mini-stats">
+            <span>👁️ 1,245 Views</span>
+            <span>📅 Posted Recently</span>
+          </div>
+        </div>
+      </section>
 
-        <button className="slider-btn right" onClick={nextImage}>
-          ❯
-        </button>
+      <section className="startup-gallery">
+        <div className="startup-main-image">
+          <button
+            className="startup-slider-btn left"
+            onClick={prevImage}
+          >
+            ❮
+          </button>
 
-        <div className="thumbnail-row">
+          <img
+            src={galleryImages[currentImage]}
+            alt="Property"
+          />
+
+          <button
+            className="startup-slider-btn right"
+            onClick={nextImage}
+          >
+            ❯
+          </button>
+        </div>
+
+        <div className="startup-thumbnails">
           {galleryImages.map((img, index) => (
             <img
               key={index}
               src={img}
-              alt="Property thumbnail"
-              className={currentImage === index ? "active-thumb" : ""}
+              alt="thumbnail"
+              className={
+                currentImage === index
+                  ? "startup-thumb-active"
+                  : ""
+              }
               onClick={() => setCurrentImage(index)}
             />
           ))}
         </div>
-      </div>
+      </section>
 
-      <div className="details-layout">
-        <div className="details-main">
-          <div className="details-card">
-            <h3>Property Highlights</h3>
+      <div className="startup-details-layout">
+        <main className="startup-details-main">
+          <div className="startup-details-card">
+            <h3>Overview</h3>
 
-            <div className="highlight-grid">
+            <div className="startup-overview-grid">
               <div>
                 <strong>{property.bhk}</strong>
-                <span>Configuration</span>
+                <span>BHK</span>
               </div>
 
               <div>
                 <strong>{property.area}</strong>
-                <span>Built-up Area</span>
+                <span>Area</span>
               </div>
 
               <div>
@@ -235,28 +267,29 @@ function PropertyDetails() {
               </div>
 
               <div>
-                <strong>Ready to Move</strong>
+                <strong>Ready</strong>
                 <span>Status</span>
               </div>
             </div>
           </div>
 
-          <div className="details-card">
+          <div className="startup-details-card">
             <h3>Description</h3>
-            <p>
+
+            <p className="startup-description">
               {property.description ||
-                "This premium property is located in a well-connected area with modern amenities, excellent road access, nearby schools, hospitals, shopping centers, and public transport facilities."}
+                "This premium property is located in a prime area with excellent connectivity, schools, hospitals, shopping centers, and modern amenities nearby."}
             </p>
           </div>
 
-          <div className="details-card">
+          <div className="startup-details-card">
             <h3>Amenities</h3>
 
-            <div className="amenities-grid">
+            <div className="startup-amenities">
               <span>🏊 Swimming Pool</span>
               <span>🏋️ Gym</span>
               <span>🚗 Parking</span>
-              <span>🛡️ 24/7 Security</span>
+              <span>🛡️ Security</span>
               <span>🌳 Garden</span>
               <span>⚡ Power Backup</span>
               <span>🛗 Lift</span>
@@ -264,88 +297,96 @@ function PropertyDetails() {
             </div>
           </div>
 
-          <div className="details-card">
+          <div className="startup-details-card">
             <h3>Location</h3>
 
-            <div className="map-box">
-              <div className="map-overlay">
-                <h4>📍 {property.location}</h4>
-                <p>Explore nearby schools, hospitals & transport</p>
+            <div className="startup-map-box">
+              <h4>📍 {property.location}</h4>
 
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${property.location}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="map-btn"
-                >
-                  View on Google Maps
-                </a>
-              </div>
+              <p>
+                Explore nearby schools, hospitals &
+                transport facilities.
+              </p>
+
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${property.location}`}
+                target="_blank"
+                rel="noreferrer"
+                className="startup-map-btn"
+              >
+                Open in Google Maps
+              </a>
             </div>
           </div>
 
-          <div className="details-card">
+          <div className="startup-details-card">
             <h3>EMI Calculator</h3>
 
-            <form className="emi-calculator" onSubmit={calculateEmi}>
-              <div>
-                <label>Loan Amount</label>
-                <input
-                  type="number"
-                  name="loanAmount"
-                  placeholder="Example: 5000000"
-                  value={emiData.loanAmount}
-                  onChange={handleEmiChange}
-                />
-              </div>
+            <form
+              className="startup-emi-form"
+              onSubmit={calculateEmi}
+            >
+              <input
+                type="number"
+                name="loanAmount"
+                placeholder="Loan Amount"
+                value={emiData.loanAmount}
+                onChange={handleEmiChange}
+              />
 
-              <div>
-                <label>Interest Rate (%)</label>
-                <input
-                  type="number"
-                  name="interestRate"
-                  value={emiData.interestRate}
-                  onChange={handleEmiChange}
-                />
-              </div>
+              <input
+                type="number"
+                name="interestRate"
+                placeholder="Interest Rate"
+                value={emiData.interestRate}
+                onChange={handleEmiChange}
+              />
 
-              <div>
-                <label>Loan Tenure (Years)</label>
-                <input
-                  type="number"
-                  name="years"
-                  value={emiData.years}
-                  onChange={handleEmiChange}
-                />
-              </div>
+              <input
+                type="number"
+                name="years"
+                placeholder="Years"
+                value={emiData.years}
+                onChange={handleEmiChange}
+              />
 
-              <button type="submit">Calculate EMI</button>
+              <button type="submit">
+                Calculate EMI
+              </button>
             </form>
 
             {emiResult && (
-              <div className="emi-result">
-                <h4>Estimated Monthly EMI</h4>
-                <h2>₹{emiResult.emi.toLocaleString("en-IN")}</h2>
+              <div className="startup-emi-result">
+                <h2>
+                  ₹
+                  {emiResult.emi.toLocaleString(
+                    "en-IN"
+                  )}
+                </h2>
 
                 <p>
-                  <strong>Total Interest:</strong> ₹
-                  {emiResult.totalInterest.toLocaleString("en-IN")}
+                  Total Interest: ₹
+                  {emiResult.totalInterest.toLocaleString(
+                    "en-IN"
+                  )}
                 </p>
 
                 <p>
-                  <strong>Total Payment:</strong> ₹
-                  {emiResult.totalPayment.toLocaleString("en-IN")}
+                  Total Payment: ₹
+                  {emiResult.totalPayment.toLocaleString(
+                    "en-IN"
+                  )}
                 </p>
               </div>
             )}
           </div>
-        </div>
+        </main>
 
-        <div className="details-sidebar">
-          <div className="agent-box">
+        <aside className="startup-details-sidebar">
+          <div className="startup-agent-box">
             <h3>Contact Agent</h3>
 
-            <div className="agent-profile">
+            <div className="startup-agent-profile">
               <img
                 src="https://randomuser.me/api/portraits/men/32.jpg"
                 alt="Agent"
@@ -353,34 +394,31 @@ function PropertyDetails() {
 
               <div>
                 <h4>Rahul Sharma</h4>
-                <p>Verified Property Consultant</p>
+                <p>Verified Consultant</p>
               </div>
             </div>
 
-            <p>
-              <strong>Phone:</strong> +91 98765 43210
-            </p>
-            <p>
-              <strong>Email:</strong> agent@realestate.com
-            </p>
+            <a
+              href="tel:+919876543210"
+              className="startup-call-btn"
+            >
+              Call Now
+            </a>
 
-            <div className="agent-actions">
-              <a href="tel:+919876543210" className="call-btn">
-                Call Now
-              </a>
-
-              <a
-                href="https://wa.me/919876543210"
-                target="_blank"
-                rel="noreferrer"
-                className="whatsapp-btn"
-              >
-                WhatsApp
-              </a>
-            </div>
+            <a
+              href="https://wa.me/919876543210"
+              target="_blank"
+              rel="noreferrer"
+              className="startup-whatsapp-btn"
+            >
+              WhatsApp
+            </a>
           </div>
 
-          <form className="enquiry-form" onSubmit={handleEnquirySubmit}>
+          <form
+            className="startup-enquiry-box"
+            onSubmit={handleEnquirySubmit}
+          >
             <h3>Send Enquiry</h3>
 
             <input
@@ -414,54 +452,71 @@ function PropertyDetails() {
               name="message"
               value={enquiry.message}
               onChange={handleEnquiryChange}
-            ></textarea>
+            />
 
-            <button type="submit">Send Enquiry</button>
+            <button type="submit">
+              Send Enquiry
+            </button>
           </form>
-        </div>
+        </aside>
       </div>
 
-      <section className="similar-section">
+      <section className="startup-similar">
         <h2>Similar Properties</h2>
 
         <div className="property-grid">
           {similarProperties.length === 0 ? (
             <div className="empty-state">
               <h3>No Similar Properties</h3>
-              <p>Try exploring other buy or rent properties.</p>
             </div>
           ) : (
             similarProperties.map((item) => (
-              <PropertyCard key={item._id} property={item} />
+              <PropertyCard
+                key={item._id}
+                property={item}
+              />
             ))
           )}
         </div>
       </section>
+
       {showLoginPopup && (
-  <div className="login-popup-overlay">
-    <div className="login-popup">
-      <button
-        className="popup-close"
-        onClick={() => setShowLoginPopup(false)}
-      >
-        ×
-      </button>
+        <div className="login-popup-overlay">
+          <div className="login-popup">
+            <button
+              className="popup-close"
+              onClick={() =>
+                setShowLoginPopup(false)
+              }
+            >
+              ×
+            </button>
 
-      <h3>Login Required</h3>
-      <p>Please login or register to send an enquiry for this property.</p>
+            <h3>Login Required</h3>
 
-      <div className="popup-actions">
-        <a href="/login" className="popup-login-btn">
-          Login
-        </a>
+            <p>
+              Please login or register to send an
+              enquiry.
+            </p>
 
-        <a href="/register" className="popup-register-btn">
-          Register
-        </a>
-      </div>
-    </div>
-  </div>
-)}
+            <div className="popup-actions">
+              <a
+                href="/login"
+                className="popup-login-btn"
+              >
+                Login
+              </a>
+
+              <a
+                href="/register"
+                className="popup-register-btn"
+              >
+                Register
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
