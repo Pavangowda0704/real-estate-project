@@ -1,6 +1,17 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { FaBars, FaTimes, FaUserCircle } from "react-icons/fa";
+import {
+  FaBars,
+  FaTimes,
+  FaUserCircle,
+  FaHome,
+  FaBuilding,
+  FaKey,
+  FaUsers,
+  FaExchangeAlt,
+  FaInfoCircle,
+  FaPhoneAlt,
+} from "react-icons/fa";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -23,6 +34,14 @@ function Navbar() {
     };
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "auto";
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [menuOpen]);
+
   const closeMenu = () => setMenuOpen(false);
 
   const logout = () => {
@@ -33,6 +52,17 @@ function Navbar() {
   };
 
   const isAdmin = user?.role === "admin";
+  const dashboardPath = isAdmin ? "/admin" : "/dashboard";
+
+  const links = [
+    { to: "/", label: "Home", icon: <FaHome /> },
+    { to: "/buy", label: "Buy", icon: <FaBuilding /> },
+    { to: "/rent", label: "Rent", icon: <FaKey /> },
+    { to: "/agents", label: "Agents", icon: <FaUsers /> },
+    { to: "/compare", label: "Compare", icon: <FaExchangeAlt /> },
+    { to: "/about", label: "About", icon: <FaInfoCircle /> },
+    { to: "/contact", label: "Contact", icon: <FaPhoneAlt /> },
+  ];
 
   return (
     <>
@@ -43,22 +73,17 @@ function Navbar() {
         </Link>
 
         <nav className="pro-navbar-links">
-          <NavLink to="/">Home</NavLink>
-          <NavLink to="/buy">Buy</NavLink>
-          <NavLink to="/rent">Rent</NavLink>
-          <NavLink to="/agents">Agents</NavLink>
-          <NavLink to="/compare">Compare</NavLink>
-          <NavLink to="/about">About</NavLink>
-          <NavLink to="/contact">Contact</NavLink>
+          {links.map((item) => (
+            <NavLink key={item.to} to={item.to}>
+              {item.label}
+            </NavLink>
+          ))}
         </nav>
 
         <div className="pro-navbar-actions">
           {user ? (
             <>
-              <Link
-                to={isAdmin ? "/admin" : "/dashboard"}
-                className="pro-user-pill"
-              >
+              <Link to={dashboardPath} className="pro-user-pill">
                 <FaUserCircle />
                 {isAdmin ? "Admin" : "Dashboard"}
               </Link>
@@ -83,13 +108,18 @@ function Navbar() {
         <button
           className="pro-mobile-toggle"
           onClick={() => setMenuOpen(true)}
+          aria-label="Open menu"
         >
           <FaBars />
         </button>
       </header>
 
       {menuOpen && (
-        <div className="pro-mobile-overlay" onClick={closeMenu}></div>
+        <button
+          className="pro-mobile-overlay"
+          onClick={closeMenu}
+          aria-label="Close menu"
+        />
       )}
 
       <aside className={`pro-mobile-menu ${menuOpen ? "show" : ""}`}>
@@ -99,40 +129,29 @@ function Navbar() {
             <span>RealEstatePro</span>
           </Link>
 
-          <button className="pro-mobile-close" onClick={closeMenu}>
+          <button
+            className="pro-mobile-close"
+            onClick={closeMenu}
+            aria-label="Close menu"
+          >
             <FaTimes />
           </button>
         </div>
 
         <nav className="pro-mobile-links">
-          <NavLink to="/" onClick={closeMenu}>
-            Home
-          </NavLink>
-          <NavLink to="/buy" onClick={closeMenu}>
-            Buy Properties
-          </NavLink>
-          <NavLink to="/rent" onClick={closeMenu}>
-            Rent Properties
-          </NavLink>
-          <NavLink to="/agents" onClick={closeMenu}>
-            Agents
-          </NavLink>
-          <NavLink to="/compare" onClick={closeMenu}>
-            Compare
-          </NavLink>
-          <NavLink to="/about" onClick={closeMenu}>
-            About
-          </NavLink>
-          <NavLink to="/contact" onClick={closeMenu}>
-            Contact
-          </NavLink>
+          {links.map((item) => (
+            <NavLink key={item.to} to={item.to} onClick={closeMenu}>
+              <span>{item.icon}</span>
+              {item.label}
+            </NavLink>
+          ))}
         </nav>
 
         <div className="pro-mobile-actions">
           {user ? (
             <>
               <Link
-                to={isAdmin ? "/admin" : "/dashboard"}
+                to={dashboardPath}
                 onClick={closeMenu}
                 className="pro-mobile-primary"
               >

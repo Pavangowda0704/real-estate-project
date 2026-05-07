@@ -7666,3 +7666,52 @@ a,
     font-size: 40px;
   }
 }
+/* SIMPLE MOBILE UX FIX */
+@media (max-width: 520px) {
+  .hero {
+    min-height: auto !important;
+    padding: 70px 18px 45px !important;
+    text-align: left !important;
+  }
+
+  .hero h1 {
+    font-size: 36px !important;
+    line-height: 1.15 !important;
+    margin-bottom: 14px !important;
+  }
+
+  .hero p {
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+    margin-bottom: 22px !important;
+  }
+
+  .search-box {
+    margin-top: 22px !important;
+    padding: 16px !important;
+    border-radius: 20px !important;
+  }
+
+  .search-box input,
+  .search-box select,
+  .search-box button {
+    width: 100% !important;
+    min-height: 50px;
+  }
+
+  .floating-lead-btn,
+  .floating-help,
+  .help-widget,
+  .support-widget {
+    display: none !important;
+  }
+
+  .section {
+    padding: 45px 18px !important;
+  }
+
+  .section h2 {
+    font-size: 28px !important;
+    line-height: 1.2;
+  }
+}

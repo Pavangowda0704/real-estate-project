@@ -4,12 +4,15 @@ import User from "../models/User.js";
 import sendEmail from "../utils/sendEmail.js";
 
 const generateToken = (id, role) => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET is missing");
+  }
+
   return jwt.sign({ id, role }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE,
+    expiresIn: process.env.JWT_EXPIRE || "7d",
   });
 };
 
-// REGISTER
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -65,12 +68,19 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// LOGIN
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email: email?.toLowerCase().trim() });
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email and password are required",
+      });
+    }
+
+    const user = await User.findOne({
+      email: email.toLowerCase().trim(),
+    });
 
     if (user && (await user.matchPassword(password))) {
       return res.json({
@@ -82,14 +92,13 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    res.status(401).json({ message: "Invalid credentials" });
+    return res.status(401).json({ message: "Invalid credentials" });
   } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ message: "Login failed" });
+    console.error("LOGIN ERROR:", error);
+    return res.status(500).json({ message: error.message || "Login failed" });
   }
 };
 
-// FORGOT PASSWORD
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -98,9 +107,10 @@ export const forgotPassword = async (req, res) => {
       return res.status(400).json({ message: "Email is required" });
     }
 
-    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    const user = await User.findOne({
+      email: email.toLowerCase().trim(),
+    });
 
-    // Never reveal whether email exists
     if (!user) {
       return res.json({
         message: "If this email exists, password reset instructions have been sent.",
@@ -111,7 +121,8 @@ export const forgotPassword = async (req, res) => {
     await user.save({ validateBeforeSave: false });
 
     const frontendUrl =
-      process.env.FRONTEND_URL || "https://real-estate-project-xi-five.vercel.app";
+      process.env.FRONTEND_URL ||
+      "https://real-estate-project-xi-five.vercel.app";
 
     const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
 
@@ -129,31 +140,27 @@ export const forgotPassword = async (req, res) => {
     `;
 
     try {
-  await sendEmail({
-    to: user.email,
-    subject: "RealEstatePro Password Reset",
-    html,
-  });
+      await sendEmail({
+        to: user.email,
+        subject: "RealEstatePro Password Reset",
+        html,
+      });
+    } catch (emailError) {
+      console.error("EMAIL DELIVERY FAILED:", emailError.message);
+    }
 
-  return res.json({
-    message: "If this email exists, password reset instructions have been sent.",
-  });
-} catch (emailError) {
-  console.error("Email error:", emailError);
-
-  // Do not break app because SMTP failed
-  return res.json({
-    message:
-      "Reset link generated, but email delivery is temporarily unavailable. Please contact admin.",
-  });
-}
+    return res.json({
+      message:
+        "If this email exists, password reset instructions have been sent.",
+    });
   } catch (error) {
-    console.error("Forgot password error:", error);
-    res.status(500).json({ message: "Forgot password failed" });
+    console.error("FORGOT PASSWORD ERROR:", error);
+    return res.status(500).json({
+      message: error.message || "Forgot password failed",
+    });
   }
 };
 
-// RESET PASSWORD
 export const resetPassword = async (req, res) => {
   try {
     const { token } = req.params;
@@ -187,11 +194,13 @@ export const resetPassword = async (req, res) => {
 
     await user.save();
 
-    res.json({
+    return res.json({
       message: "Password reset successful. Please login with your new password.",
     });
   } catch (error) {
-    console.error("Reset password error:", error);
-    res.status(500).json({ message: "Password reset failed" });
+    console.error("RESET PASSWORD ERROR:", error);
+    return res.status(500).json({
+      message: error.message || "Password reset failed",
+    });
   }
 };
