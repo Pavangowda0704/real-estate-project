@@ -11,36 +11,28 @@ import {
 
 function Footer() {
   return (
-    <footer className="footer pro-footer">
-      <div className="footer-container pro-footer-container">
-        <div className="footer-section pro-footer-brand">
+    <footer className="pro-footer">
+      <div className="pro-footer-container">
+        <div className="pro-footer-brand">
           <Link to="/" className="pro-footer-logo">
             <span className="logo-icon">🏡</span>
             <span>RealEstatePro</span>
           </Link>
 
           <p>
-            Find your dream property with ease. Buy, rent, compare, and enquire
-            across Bangalore with trusted agents and verified listings.
+            Find verified properties, compare homes, rent, buy, and connect with
+            trusted agents across Bangalore.
           </p>
 
-          <div className="social-icons pro-social-icons">
-            <a href="#" aria-label="Facebook">
-              <FaFacebookF />
-            </a>
-            <a href="#" aria-label="Instagram">
-              <FaInstagram />
-            </a>
-            <a href="#" aria-label="LinkedIn">
-              <FaLinkedinIn />
-            </a>
-            <a href="#" aria-label="Twitter">
-              <FaTwitter />
-            </a>
+          <div className="pro-social-icons">
+            <a href="#" aria-label="Facebook"><FaFacebookF /></a>
+            <a href="#" aria-label="Instagram"><FaInstagram /></a>
+            <a href="#" aria-label="LinkedIn"><FaLinkedinIn /></a>
+            <a href="#" aria-label="Twitter"><FaTwitter /></a>
           </div>
         </div>
 
-        <div className="footer-section">
+        <div className="pro-footer-section">
           <h4>Quick Links</h4>
           <Link to="/">Home</Link>
           <Link to="/buy">Buy</Link>
@@ -49,7 +41,7 @@ function Footer() {
           <Link to="/compare">Compare</Link>
         </div>
 
-        <div className="footer-section">
+        <div className="pro-footer-section">
           <h4>Services</h4>
           <Link to="/buy">Buy Property</Link>
           <Link to="/rent">Rent Property</Link>
@@ -58,21 +50,27 @@ function Footer() {
           <Link to="/contact">Home Loan Help</Link>
         </div>
 
-        <div className="footer-section">
-          <h4>Contact Us</h4>
-          <p>
-            <FaMapMarkerAlt /> Bangalore, India
+        <div className="pro-footer-section">
+          <h4>Contact</h4>
+
+          <p className="pro-footer-contact">
+            <FaMapMarkerAlt />
+            <span>Bangalore, India</span>
           </p>
-          <p>
-            <FaPhoneAlt /> +91 98765 43210
+
+          <p className="pro-footer-contact">
+            <FaPhoneAlt />
+            <span>+91 98765 43210</span>
           </p>
-          <p>
-            <FaEnvelope /> support@realestate.com
+
+          <p className="pro-footer-contact">
+            <FaEnvelope />
+            <span>support@realestate.com</span>
           </p>
         </div>
       </div>
 
-      <div className="footer-bottom pro-footer-bottom">
+      <div className="pro-footer-bottom">
         <p>© 2026 RealEstatePro. All rights reserved.</p>
       </div>
     </footer>
