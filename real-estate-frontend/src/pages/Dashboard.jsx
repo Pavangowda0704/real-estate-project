@@ -12,89 +12,129 @@ function Dashboard() {
 
   if (!user) {
     return (
-      <div className="section">
-        <h2>Please login first</h2>
-        <Link to="/login" className="details-btn">
-          Go to Login
-        </Link>
+      <div className="profile-dashboard">
+        <div className="profile-card">
+          <h2>Please login first</h2>
+
+          <Link to="/login" className="profile-btn">
+            Go to Login
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="section">
-      <div className="dashboard-header">
-        <div>
-          <h2>Welcome, {user.name}</h2>
-          <p>Email: {user.email}</p>
-          <p>Role: {user.role}</p>
+    <main className="profile-dashboard">
+      {/* PROFILE SECTION */}
+      <section className="profile-header-card">
+        <div className="profile-avatar">
+          {user.name?.charAt(0).toUpperCase()}
         </div>
 
-        <button onClick={handleLogout} className="logout-btn">
+        <div className="profile-user-info">
+          <h1>{user.name}</h1>
+
+          <p>{user.email}</p>
+
+          <span className="profile-role">
+            {user.role?.toUpperCase()}
+          </span>
+        </div>
+
+        <button onClick={handleLogout} className="profile-logout-btn">
           Logout
         </button>
-      </div>
+      </section>
 
-      {user.role === "buyer" && (
-        <div className="dashboard-card">
-          <div className="dashboard-card-content">
-            <h3>Buyer Dashboard</h3>
-            <p>
-              As a buyer, you can browse properties, compare listings, and send
-              enquiries.
-            </p>
+      {/* ACCOUNT DETAILS */}
+      <section className="profile-section-card">
+        <div className="profile-section-title">
+          <h2>Account Details</h2>
+        </div>
 
-            <div className="dashboard-actions">
-              <Link to="/buy" className="details-btn">
-                Browse Buy Properties
-              </Link>
+        <div className="profile-details-grid">
+          <div className="profile-detail-box">
+            <span>Full Name</span>
+            <h3>{user.name}</h3>
+          </div>
 
-              <Link to="/rent" className="details-btn">
-                Browse Rent Properties
-              </Link>
+          <div className="profile-detail-box">
+            <span>Email Address</span>
+            <h3>{user.email}</h3>
+          </div>
 
-              <Link to="/compare" className="details-btn">
-                Compare Properties
-              </Link>
-            </div>
+          <div className="profile-detail-box">
+            <span>Account Role</span>
+            <h3>{user.role}</h3>
+          </div>
+
+          <div className="profile-detail-box">
+            <span>Status</span>
+            <h3>Active</h3>
           </div>
         </div>
-      )}
+      </section>
 
-      {(user.role === "agent" || user.role === "seller") && (
-        <div className="dashboard-card">
-          <div className="dashboard-card-content">
-            <h3>{user.role === "agent" ? "Agent" : "Seller"} Dashboard</h3>
-            <p>
-              Manage your own property listings and view enquiries from buyers.
-            </p>
-
-            <div className="dashboard-actions">
-              <Link to="/agent" className="details-btn">
-                Manage My Properties
-              </Link>
-
-              <Link to="/post-property" className="details-btn">
-                Post New Property
-              </Link>
-            </div>
-          </div>
+      {/* LIKED PROPERTIES */}
+      <section className="profile-section-card">
+        <div className="profile-section-title">
+          <h2>Liked Properties</h2>
         </div>
-      )}
 
-      {user.role === "admin" && (
-        <div className="dashboard-card">
-          <div className="dashboard-card-content">
-            <h3>Admin Dashboard</h3>
-            <p>You have full platform control.</p>
+        <div className="profile-empty-card">
+          <div className="profile-empty-icon">❤️</div>
 
-            <Link to="/admin" className="details-btn">
-              Go to Admin Panel
+          <h3>No liked properties yet</h3>
+
+          <p>
+            Save your favorite homes and properties to access them quickly.
+          </p>
+
+          <Link to="/buy" className="profile-btn">
+            Explore Properties
+          </Link>
+        </div>
+      </section>
+
+      {/* QUICK ACTIONS */}
+      <section className="profile-section-card">
+        <div className="profile-section-title">
+          <h2>Quick Actions</h2>
+        </div>
+
+        <div className="profile-actions-grid">
+          <Link to="/buy" className="profile-action-card">
+            <div className="profile-action-icon">🏠</div>
+            <h3>Buy Properties</h3>
+          </Link>
+
+          <Link to="/rent" className="profile-action-card">
+            <div className="profile-action-icon">🔑</div>
+            <h3>Rent Properties</h3>
+          </Link>
+
+          <Link to="/compare" className="profile-action-card">
+            <div className="profile-action-icon">⚖️</div>
+            <h3>Compare</h3>
+          </Link>
+
+          {(user.role === "agent" || user.role === "seller") && (
+            <Link to="/agent" className="profile-action-card">
+              <div className="profile-action-icon">📋</div>
+              <h3>Manage Properties</h3>
             </Link>
-          </div>
+          )}
+
+          {user.role === "admin" && (
+            <Link to="/admin" className="profile-action-card">
+              <div className="profile-action-icon">🛠️</div>
+              <h3>Admin Panel</h3>
+            </Link>
+          )}
         </div>
-      )}
-    </div>
+      </section>
+    </main>
   );
 }
 

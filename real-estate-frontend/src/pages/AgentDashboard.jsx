@@ -12,11 +12,8 @@ function AgentDashboard() {
   const canManage = user?.role === "agent" || user?.role === "seller";
 
   useEffect(() => {
-    if (canManage) {
-      fetchData();
-    } else {
-      setLoading(false);
-    }
+    if (canManage) fetchData();
+    else setLoading(false);
   }, [canManage]);
 
   const fetchData = async () => {
@@ -47,86 +44,173 @@ function AgentDashboard() {
 
   if (!canManage) {
     return (
-      <div className="section">
-        <h2>Access Denied</h2>
-        <p>Only agents and sellers can manage properties.</p>
-        <Link to="/dashboard" className="details-btn">
-          Back to Dashboard
-        </Link>
-      </div>
+      <main className="agent-pro-page">
+        <div className="agent-access-card">
+          <h2>Access Denied</h2>
+          <p>Only agents and sellers can manage properties.</p>
+          <Link to="/dashboard">Back to Dashboard</Link>
+        </div>
+      </main>
     );
   }
 
   if (loading) {
     return (
-      <div className="section">
-        <h2>Loading dashboard...</h2>
-      </div>
+      <main className="agent-pro-page">
+        <div className="agent-access-card">
+          <h2>Loading dashboard...</h2>
+          <p>Please wait while we load your listings and enquiries.</p>
+        </div>
+      </main>
     );
   }
 
   return (
-    <div className="section">
-      <div className="dashboard-header">
+    <main className="agent-pro-page">
+      <section className="agent-hero">
         <div>
-          <h2>{user.role === "agent" ? "Agent" : "Seller"} Dashboard</h2>
-          <p>Manage only your own property listings.</p>
+          <span>{user.role === "agent" ? "Agent Panel" : "Seller Panel"}</span>
+          <h1>Welcome, {user?.name || "User"}</h1>
+          <p>
+            Manage your property listings, track enquiries, and keep your real
+            estate business organized.
+          </p>
         </div>
 
-        <Link to="/post-property" className="details-btn">
+        <Link to="/post-property" className="agent-add-btn">
           + Add Property
         </Link>
-      </div>
+      </section>
 
-      <h3>My Properties</h3>
-
-      {properties.length === 0 ? (
-        <p>No properties posted yet.</p>
-      ) : (
-        <div className="dashboard-list">
-          {properties.map((p) => (
-            <div key={p._id} className="dashboard-card">
-              <img src={p.image} alt={p.title} />
-
-              <div className="dashboard-card-content">
-                <h3>{p.title}</h3>
-                <p>{p.location}</p>
-                <p>{p.price}</p>
-                <p>
-                  {p.bhk} | {p.area}
-                </p>
-
-                <Link to={`/edit-property/${p._id}`} className="edit-btn">
-                  Edit Property
-                </Link>
-
-                <button
-                  onClick={() => deleteProperty(p._id)}
-                  className="delete-btn"
-                >
-                  Delete Property
-                </button>
-              </div>
-            </div>
-          ))}
+      <section className="agent-stats">
+        <div>
+          <span>🏘️</span>
+          <strong>{properties.length}</strong>
+          <p>My Properties</p>
         </div>
-      )}
 
-      <h3 style={{ marginTop: "30px" }}>Enquiries For My Properties</h3>
+        <div>
+          <span>📩</span>
+          <strong>{enquiries.length}</strong>
+          <p>Total Enquiries</p>
+        </div>
 
-      {enquiries.length === 0 ? (
-        <p>No enquiries yet.</p>
-      ) : (
-        enquiries.map((e) => (
-          <div key={e._id} className="admin-row">
-            <span>{e.name}</span>
-            <span>{e.email}</span>
-            <span>{e.phone}</span>
-            <span>{e.property?.title || "N/A"}</span>
+        <div>
+          <span>✅</span>
+          <strong>{properties.filter((p) => p.status !== "Sold").length}</strong>
+          <p>Active Listings</p>
+        </div>
+
+        <div>
+          <span>👤</span>
+          <strong>{user.role}</strong>
+          <p>Account Role</p>
+        </div>
+      </section>
+
+      <section className="agent-actions">
+        <Link to="/post-property">
+          <span>➕</span>
+          <div>
+            <strong>Post Property</strong>
+            <p>Add a new listing quickly.</p>
           </div>
-        ))
-      )}
-    </div>
+        </Link>
+
+        <Link to="/buy">
+          <span>🏠</span>
+          <div>
+            <strong>View Market</strong>
+            <p>Browse active properties.</p>
+          </div>
+        </Link>
+
+        <Link to="/contact">
+          <span>🛟</span>
+          <div>
+            <strong>Need Support?</strong>
+            <p>Contact platform support.</p>
+          </div>
+        </Link>
+      </section>
+
+      <section className="agent-section">
+        <div className="agent-section-head">
+          <div>
+            <span>Listings</span>
+            <h2>My Properties</h2>
+          </div>
+
+          <Link to="/post-property">Add New</Link>
+        </div>
+
+        {properties.length === 0 ? (
+          <div className="agent-empty">
+            <h3>No properties posted yet</h3>
+            <p>Start by adding your first property listing.</p>
+            <Link to="/post-property">Post Property</Link>
+          </div>
+        ) : (
+          <div className="agent-property-grid">
+            {properties.map((p) => (
+              <article key={p._id} className="agent-property-card">
+                <img src={p.image} alt={p.title} />
+
+                <div>
+                  <h3>{p.title}</h3>
+                  <p>{p.location}</p>
+
+                  <div className="agent-property-meta">
+                    <span>{p.price}</span>
+                    <span>{p.bhk}</span>
+                    <span>{p.area}</span>
+                  </div>
+
+                  <div className="agent-card-actions">
+                    <Link to={`/edit-property/${p._id}`}>Edit</Link>
+                    <button onClick={() => deleteProperty(p._id)}>
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="agent-section">
+        <div className="agent-section-head">
+          <div>
+            <span>Customer Leads</span>
+            <h2>Enquiries For My Properties</h2>
+          </div>
+        </div>
+
+        {enquiries.length === 0 ? (
+          <div className="agent-empty">
+            <h3>No enquiries yet</h3>
+            <p>Enquiries from customers will appear here.</p>
+          </div>
+        ) : (
+          <div className="agent-enquiry-list">
+            {enquiries.map((e) => (
+              <div key={e._id} className="agent-enquiry-card">
+                <div>
+                  <strong>{e.name}</strong>
+                  <p>{e.property?.title || "Property not available"}</p>
+                </div>
+
+                <div>
+                  <span>{e.email}</span>
+                  <span>{e.phone}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+    </main>
   );
 }
 

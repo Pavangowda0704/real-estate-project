@@ -38,100 +38,82 @@ function Home() {
   ];
 
   return (
-    <main className="customer-home">
-      <section className="customer-hero">
-        <div className="customer-hero-text">
-          <span className="customer-badge">Verified Real Estate Platform</span>
-          <h1>Find your next home with confidence</h1>
+    <main className="estate-home">
+      <section className="estate-hero">
+        <div className="estate-hero-left">
+          <span className="estate-badge">Bangalore Verified Properties</span>
+
+          <h1>
+            Find a home that feels right.
+          </h1>
+
           <p>
-            Explore verified properties for buying and renting across Bangalore.
+            Buy, rent, compare, and request property support from one clean real
+            estate platform.
           </p>
 
-          <div className="customer-search">
-  <input placeholder="Search location, property or city" />
+          <div className="estate-search">
+            <input placeholder="Search location, property or city" />
 
-  <div className="customer-desktop-filters">
-    <select>
-      <option>Property Type</option>
-      <option>Apartment</option>
-      <option>Villa</option>
-      <option>Plot</option>
-      <option>Commercial</option>
-    </select>
+            <div className="estate-desktop-filters">
+              <select>
+                <option>Property Type</option>
+                <option>Apartment</option>
+                <option>Villa</option>
+                <option>Plot</option>
+                <option>Commercial</option>
+              </select>
 
-    <select>
-      <option>Purpose</option>
-      <option>Buy</option>
-      <option>Rent</option>
-    </select>
-  </div>
+              <select>
+                <option>Purpose</option>
+                <option>Buy</option>
+                <option>Rent</option>
+              </select>
+            </div>
 
-  <Link to="/buy">Search</Link>
-</div>
+            <Link to="/buy">Search</Link>
+          </div>
         </div>
 
-        <div className="customer-hero-image">
-  <div className="customer-image-slider">
-    <img
-      src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
-      alt="Property 1"
-    />
-
-    <img
-      src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c"
-      alt="Property 2"
-    />
-
-    <img
-      src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3"
-      alt="Property 3"
-    />
-
-    <img
-      src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9"
-      alt="Property 4"
-    />
-  </div>
-</div>
+        <div className="estate-hero-right">
+          <div className="estate-slider">
+            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c" alt="Luxury home" />
+            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c" alt="Modern apartment" />
+            <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3" alt="Rental home" />
+            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9" alt="Premium house" />
+          </div>
+        </div>
       </section>
 
-      <section className="customer-actions">
-        <Link to="/buy" className="customer-action-card">
+      <section className="estate-actions">
+        <Link to="/buy" className="estate-action">
           <span>🏠</span>
-          <div>
-            <strong>Buy</strong>
-            <small>Find homes</small>
-          </div>
+          <strong>Buy</strong>
+          <small>Verified homes</small>
         </Link>
 
-        <Link to="/rent" className="customer-action-card">
+        <Link to="/rent" className="estate-action">
           <span>🔑</span>
-          <div>
-            <strong>Rent</strong>
-            <small>Rental homes</small>
-          </div>
+          <strong>Rent</strong>
+          <small>Rental spaces</small>
         </Link>
 
-        <div className="customer-action-card">
+        <div className="estate-action">
           <span>📤</span>
-          <div>
-            <strong>Sell</strong>
-            <small>Get support</small>
-          </div>
-          <LeadRequestButton label="Start" className="customer-small-btn" />
+          <strong>Sell</strong>
+          <small>Get support</small>
+          <LeadRequestButton label="Start" className="estate-hidden-btn" />
         </div>
 
-        <Link to="/compare" className="customer-action-card">
+        <Link to="/compare" className="estate-action">
           <span>⚖️</span>
-          <div>
-            <strong>Compare</strong>
-            <small>Choose better</small>
-          </div>
+          <strong>Compare</strong>
+          <small>Choose better</small>
         </Link>
       </section>
 
-      <section className="customer-section">
-        <div className="customer-section-head">
+      <section className="estate-section">
+        <div className="estate-head">
           <div>
             <span>Recommended</span>
             <h2>Featured Properties</h2>
@@ -139,15 +121,15 @@ function Home() {
           <Link to="/buy">View all</Link>
         </div>
 
-        <div className="customer-property-grid">
+        <div className="estate-property-row">
           {properties.map((item, index) => (
-            <Link to={item.link} className="customer-property-card" key={index}>
-              <div className="customer-property-img">
+            <Link to={item.link} className="estate-card" key={index}>
+              <div className="estate-card-img">
                 <img src={item.img} alt={item.title} />
                 <span>{item.tag}</span>
               </div>
 
-              <div className="customer-property-info">
+              <div className="estate-card-body">
                 <h3>{item.title}</h3>
                 <p>{item.place}</p>
                 <strong>{item.price}</strong>
@@ -157,15 +139,15 @@ function Home() {
         </div>
       </section>
 
-      <section className="customer-section">
-        <div className="customer-section-head">
+      <section className="estate-section">
+        <div className="estate-head">
           <div>
             <span>Popular Areas</span>
             <h2>Explore Bangalore Locations</h2>
           </div>
         </div>
 
-        <div className="customer-locations">
+        <div className="estate-location-list">
           <Link to="/buy">Whitefield</Link>
           <Link to="/buy">Indiranagar</Link>
           <Link to="/buy">Marathahalli</Link>
@@ -175,23 +157,24 @@ function Home() {
         </div>
       </section>
 
-      <section className="customer-trust">
+      <section className="estate-trust">
         <div>
           <span>Why Choose Us</span>
-          <h2>Built for simple property decisions</h2>
+          <h2>Simple property decisions, faster.</h2>
           <p>
-            A clean platform for buyers, renters, sellers, agents, and admins.
+            Clean listings, direct support, role-based dashboards, and a
+            mobile-first experience for real customers.
           </p>
         </div>
 
-        <div className="customer-trust-grid">
+        <div className="estate-trust-grid">
           <div>
             <strong>Verified Listings</strong>
-            <p>Organized property details with clear information.</p>
+            <p>Clear property details with organized information.</p>
           </div>
           <div>
             <strong>Easy Compare</strong>
-            <p>Compare properties before making a decision.</p>
+            <p>Compare properties before contacting sellers.</p>
           </div>
           <div>
             <strong>Direct Support</strong>
@@ -200,7 +183,7 @@ function Home() {
         </div>
       </section>
 
-      <section className="customer-stats">
+      <section className="estate-stats">
         <div>
           <h3>500+</h3>
           <p>Properties</p>
@@ -223,3 +206,4 @@ function Home() {
 }
 
 export default Home;
+
