@@ -15,7 +15,9 @@ import {
 
 function Navbar() {
   const navigate = useNavigate();
+
   const [menuOpen, setMenuOpen] = useState(false);
+
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("loggedInUser"))
   );
@@ -51,8 +53,17 @@ function Navbar() {
     navigate("/login");
   };
 
+  // Role handling
   const isAdmin = user?.role === "admin";
-  const dashboardPath = isAdmin ? "/admin" : "/dashboard";
+
+  const isAgentOrSeller =
+    user?.role === "agent" || user?.role === "seller";
+
+  const dashboardPath = isAdmin
+    ? "/admin"
+    : isAgentOrSeller
+    ? "/agent"
+    : "/dashboard";
 
   const links = [
     { to: "/", label: "Home", icon: <FaHome /> },
@@ -66,6 +77,7 @@ function Navbar() {
 
   return (
     <>
+      {/* Desktop Navbar */}
       <header className="pro-navbar">
         <Link to="/" className="pro-navbar-logo" onClick={closeMenu}>
           <span className="logo-icon">🏡</span>
@@ -85,7 +97,12 @@ function Navbar() {
             <>
               <Link to={dashboardPath} className="pro-user-pill">
                 <FaUserCircle />
-                {isAdmin ? "Admin" : "Dashboard"}
+
+                {isAdmin
+                  ? "Admin"
+                  : isAgentOrSeller
+                  ? "Agent Panel"
+                  : "Dashboard"}
               </Link>
 
               <button onClick={logout} className="pro-logout-btn">
@@ -114,6 +131,7 @@ function Navbar() {
         </button>
       </header>
 
+      {/* Overlay */}
       {menuOpen && (
         <button
           className="pro-mobile-overlay"
@@ -122,6 +140,7 @@ function Navbar() {
         />
       )}
 
+      {/* Mobile Menu */}
       <aside className={`pro-mobile-menu ${menuOpen ? "show" : ""}`}>
         <div className="pro-mobile-menu-header">
           <Link to="/" className="pro-navbar-logo" onClick={closeMenu}>
@@ -155,7 +174,11 @@ function Navbar() {
                 onClick={closeMenu}
                 className="pro-mobile-primary"
               >
-                {isAdmin ? "Go to Admin Panel" : "Go to Dashboard"}
+                {isAdmin
+                  ? "Go to Admin Panel"
+                  : isAgentOrSeller
+                  ? "Go to Agent Panel"
+                  : "Go to Dashboard"}
               </Link>
 
               <button onClick={logout} className="pro-mobile-danger">
