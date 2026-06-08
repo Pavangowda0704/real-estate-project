@@ -6,11 +6,7 @@ import API from "../api";
 function Login() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [forgotLoading, setForgotLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -24,22 +20,15 @@ function Login() {
 
     if (user?.token) {
       if (user.role === "admin") navigate("/admin", { replace: true });
-      else if (user.role === "agent" || user.role === "seller") {
-        navigate("/agent", { replace: true });
-      } else {
-        navigate("/dashboard", { replace: true });
-      }
+      else if (user.role === "agent" || user.role === "seller") navigate("/agent", { replace: true });
+      else navigate("/dashboard", { replace: true });
     }
   }, [navigate]);
 
   const handleChange = (e) => {
     setError("");
     setMessage("");
-
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const loginUser = async (e) => {
@@ -49,22 +38,17 @@ function Login() {
     setMessage("");
 
     try {
-      const payload = {
+      const res = await API.post("/auth/login", {
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
-      };
-
-      const res = await API.post("/auth/login", payload);
+      });
 
       localStorage.setItem("loggedInUser", JSON.stringify(res.data));
       window.dispatchEvent(new Event("authChange"));
 
       if (res.data.role === "admin") navigate("/admin");
-      else if (res.data.role === "agent" || res.data.role === "seller") {
-        navigate("/agent");
-      } else {
-        navigate("/dashboard");
-      }
+      else if (res.data.role === "agent" || res.data.role === "seller") navigate("/agent");
+      else navigate("/dashboard");
     } catch (error) {
       setError(
         error.response?.data?.message ||
@@ -87,11 +71,7 @@ function Login() {
         email: forgotEmail.trim().toLowerCase(),
       });
 
-      setMessage(
-        res.data?.message ||
-          "If this email exists, password reset instructions have been sent."
-      );
-
+      setMessage(res.data?.message || "If this email exists, reset instructions have been sent.");
       setForgotEmail("");
     } catch (error) {
       setError(
@@ -105,57 +85,39 @@ function Login() {
   };
 
   return (
-    <section className="auth-pro-page auth-login-bg">
-      <div className="auth-bg-orb auth-bg-orb-one"></div>
-      <div className="auth-bg-orb auth-bg-orb-two"></div>
-
-      <div className="auth-pro-shell">
-        <div className="auth-pro-info auth-visual-panel">
-          <span className="auth-pro-kicker">RealEstatePro</span>
-
-          <h1>Welcome back to your property command center.</h1>
-
+    <section className="auth-fit-page">
+      <div className="auth-fit-card">
+        <div className="auth-fit-left">
+          <span className="auth-fit-badge">RealEstatePro</span>
+          <h1>Welcome back</h1>
           <p>
-            Login to manage saved homes, compare properties, send enquiries, and
-            access your role-based dashboard.
+            Login to access your dashboard, manage enquiries, compare properties,
+            and continue your real estate journey.
           </p>
 
-          <div className="auth-hero-card">
+          <div className="auth-fit-points">
             <div>
-              <span>Premium Listings</span>
-              <strong>120+</strong>
+              <strong>Buyer</strong>
+              <span>Save, compare and enquire properties.</span>
             </div>
             <div>
-              <span>Verified Enquiries</span>
-              <strong>Fast</strong>
+              <strong>Agent / Seller</strong>
+              <span>Manage your own property listings.</span>
             </div>
-          </div>
-
-          <div className="auth-pro-highlights">
             <div>
-              <strong>Buyer dashboard</strong>
-              <span>Saved properties, comparisons, and enquiries.</span>
-            </div>
-
-            <div>
-              <strong>Seller / Agent tools</strong>
-              <span>Post and manage your own listings safely.</span>
-            </div>
-
-            <div>
-              <strong>Admin control</strong>
-              <span>Manage users, properties, leads, and enquiries.</span>
+              <strong>Admin</strong>
+              <span>Control users, properties and enquiries.</span>
             </div>
           </div>
         </div>
 
-        <div className="auth-pro-card">
-          <div className="auth-pro-header">
-            <span className="auth-pro-icon">{showForgot ? "🔑" : "🔐"}</span>
+        <div className="auth-fit-right">
+          <div className="auth-fit-header">
+            <span>{showForgot ? "🔑" : "🔐"}</span>
             <h2>{showForgot ? "Forgot Password" : "Login"}</h2>
             <p>
               {showForgot
-                ? "Enter your registered email to request password reset."
+                ? "Enter your registered email."
                 : "Enter your credentials to continue."}
             </p>
           </div>
@@ -164,9 +126,9 @@ function Login() {
           {message && <div className="auth-pro-success">{message}</div>}
 
           {!showForgot ? (
-            <form onSubmit={loginUser} className="auth-pro-form">
+            <form onSubmit={loginUser} className="auth-fit-form">
               <label>Email Address</label>
-              <div className="auth-pro-field">
+              <div className="auth-fit-field">
                 <FaEnvelope />
                 <input
                   type="email"
@@ -175,37 +137,28 @@ function Login() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  autoComplete="email"
                 />
               </div>
 
               <label>Password</label>
-              <div className="auth-pro-field">
+              <div className="auth-fit-field">
                 <FaLock />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
-                  placeholder="Enter your password"
+                  placeholder="Enter password"
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  autoComplete="current-password"
                 />
-
-                <button
-                  type="button"
-                  className="auth-eye-btn"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
+                <button type="button" onClick={() => setShowPassword(!showPassword)}>
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
 
-              <div className="auth-pro-row">
+              <div className="auth-fit-row">
                 <button
                   type="button"
-                  className="auth-link-btn"
                   onClick={() => {
                     setShowForgot(true);
                     setForgotEmail(formData.email);
@@ -216,60 +169,43 @@ function Login() {
                   Forgot password?
                 </button>
 
-                <Link to="/register">Create buyer account</Link>
+                <Link to="/register">Create account</Link>
               </div>
 
-              <button
-                className="auth-pro-submit"
-                type="submit"
-                disabled={loading}
-              >
-                {loading ? "Logging in..." : "Login to Dashboard"}
+              <button className="auth-fit-submit" type="submit" disabled={loading}>
+                {loading ? "Logging in..." : "Login"}
               </button>
             </form>
           ) : (
-            <form onSubmit={forgotPassword} className="auth-pro-form">
+            <form onSubmit={forgotPassword} className="auth-fit-form">
               <label>Registered Email</label>
-              <div className="auth-pro-field">
+              <div className="auth-fit-field">
                 <FaEnvelope />
                 <input
                   type="email"
                   placeholder="example@mail.com"
                   value={forgotEmail}
-                  onChange={(e) => {
-                    setForgotEmail(e.target.value);
-                    setError("");
-                    setMessage("");
-                  }}
+                  onChange={(e) => setForgotEmail(e.target.value)}
                   required
-                  autoComplete="email"
                 />
               </div>
 
-              <button
-                className="auth-pro-submit"
-                type="submit"
-                disabled={forgotLoading}
-              >
-                {forgotLoading ? "Sending..." : "Send Reset Instructions"}
+              <button className="auth-fit-submit" type="submit" disabled={forgotLoading}>
+                {forgotLoading ? "Sending..." : "Send Reset Link"}
               </button>
 
               <button
                 type="button"
-                className="auth-secondary-btn"
-                onClick={() => {
-                  setShowForgot(false);
-                  setError("");
-                  setMessage("");
-                }}
+                className="auth-fit-secondary"
+                onClick={() => setShowForgot(false)}
               >
                 Back to Login
               </button>
             </form>
           )}
 
-          <p className="auth-pro-bottom">
-            New to RealEstatePro? <Link to="/register">Register as Buyer</Link>
+          <p className="auth-fit-bottom">
+            New user? <Link to="/register">Register as Buyer</Link>
           </p>
         </div>
       </div>

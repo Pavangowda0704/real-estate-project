@@ -23,21 +23,14 @@ function Register() {
 
     if (user?.token) {
       if (user.role === "admin") navigate("/admin", { replace: true });
-      else if (user.role === "agent" || user.role === "seller") {
-        navigate("/agent", { replace: true });
-      } else {
-        navigate("/dashboard", { replace: true });
-      }
+      else if (user.role === "agent" || user.role === "seller") navigate("/agent", { replace: true });
+      else navigate("/dashboard", { replace: true });
     }
   }, [navigate]);
 
   const handleChange = (e) => {
     setError("");
-
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const registerUser = async (e) => {
@@ -46,44 +39,27 @@ function Register() {
 
     const name = formData.name.trim();
     const email = formData.email.trim().toLowerCase();
-    const password = formData.password;
 
-    if (name.length < 3) {
-      setError("Name must be at least 3 characters long.");
-      return;
-    }
-
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters long.");
-      return;
-    }
-
-    if (password !== formData.confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
+    if (name.length < 3) return setError("Name must be at least 3 characters long.");
+    if (formData.password.length < 6) return setError("Password must be at least 6 characters long.");
+    if (formData.password !== formData.confirmPassword) return setError("Passwords do not match.");
 
     setLoading(true);
 
     try {
-      const payload = {
+      await API.post("/auth/register", {
         name,
         email,
-        password,
+        password: formData.password,
         role: "buyer",
-      };
-
-      await API.post("/auth/register", payload);
+      });
 
       alert("Registration successful. Please login.");
       navigate("/login");
     } catch (error) {
-      console.error("Register error:", error);
-
       setError(
         error.response?.data?.message ||
           error.response?.data?.error ||
-          error.message ||
           "Registration failed. Please try again."
       );
     } finally {
@@ -92,53 +68,49 @@ function Register() {
   };
 
   return (
-    <section className="auth-pro-page auth-register-page">
-      <div className="auth-pro-shell">
-        <div className="auth-pro-info auth-visual-panel">
-          <span className="auth-pro-kicker">Buyer Registration</span>
-
-          <h1>Create your buyer account and start finding homes.</h1>
-
+    <section className="auth-fit-page">
+      <div className="auth-fit-card">
+        <div className="auth-fit-left">
+          <span className="auth-fit-badge">Buyer Registration</span>
+          <h1>Create your buyer account</h1>
           <p>
-            Every new user is registered as a buyer by default. Admin can later
-            upgrade users to seller, agent, or admin when needed.
+            New users register as buyers by default. Admin can later upgrade
+            users to agent, seller, or admin.
           </p>
 
-          <div className="auth-pro-highlights">
+          <div className="auth-fit-points">
             <div>
               <strong>Buyer only signup</strong>
-              <span>No role selection shown to users.</span>
+              <span>No confusing role selection.</span>
             </div>
-
             <div>
-              <strong>Property discovery</strong>
-              <span>Browse, compare, and enquire easily.</span>
+              <strong>Easy property search</strong>
+              <span>Browse, compare and enquire easily.</span>
             </div>
-
             <div>
-              <strong>Safe upgrade flow</strong>
-              <span>Only admin controls seller, agent, and admin roles.</span>
+              <strong>Safe role upgrade</strong>
+              <span>Only admin controls advanced roles.</span>
             </div>
           </div>
         </div>
 
-        <div className="auth-pro-card">
-          <div className="auth-pro-header">
-            <span className="auth-pro-icon">🏡</span>
-            <h2>Create Buyer Account</h2>
+        <div className="auth-fit-right">
+          <div className="auth-fit-header">
+            <span>🏡</span>
+            <h2>Create Account</h2>
             <p>Register to browse properties and send enquiries.</p>
           </div>
 
           {error && <div className="auth-pro-error">{error}</div>}
 
-          <form onSubmit={registerUser} className="auth-pro-form">
+          <form onSubmit={registerUser} className="auth-fit-form">
             <label>Full Name</label>
-            <div className="auth-pro-field">
+            <div className="auth-fit-field">
               <FaUser />
               <input
                 type="text"
                 name="name"
-                placeholder="Enter your full name"
+                placeholder="Enter full name"
                 value={formData.name}
                 onChange={handleChange}
                 required
@@ -146,7 +118,7 @@ function Register() {
             </div>
 
             <label>Email Address</label>
-            <div className="auth-pro-field">
+            <div className="auth-fit-field">
               <FaEnvelope />
               <input
                 type="email"
@@ -159,7 +131,7 @@ function Register() {
             </div>
 
             <label>Password</label>
-            <div className="auth-pro-field">
+            <div className="auth-fit-field">
               <FaLock />
               <input
                 type={showPassword ? "text" : "password"}
@@ -169,18 +141,13 @@ function Register() {
                 onChange={handleChange}
                 required
               />
-
-              <button
-                type="button"
-                className="auth-eye-btn"
-                onClick={() => setShowPassword((prev) => !prev)}
-              >
+              <button type="button" onClick={() => setShowPassword(!showPassword)}>
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
 
             <label>Confirm Password</label>
-            <div className="auth-pro-field">
+            <div className="auth-fit-field">
               <FaLock />
               <input
                 type={showConfirmPassword ? "text" : "password"}
@@ -190,27 +157,25 @@ function Register() {
                 onChange={handleChange}
                 required
               />
-
               <button
                 type="button"
-                className="auth-eye-btn"
-                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
                 {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
 
-            <div className="auth-role-note">
+            <div className="auth-fit-note">
               Account type: <strong>Buyer</strong>
             </div>
 
-            <button className="auth-pro-submit" type="submit" disabled={loading}>
-              {loading ? "Creating account..." : "Create Buyer Account"}
+            <button className="auth-fit-submit" type="submit" disabled={loading}>
+              {loading ? "Creating..." : "Create Buyer Account"}
             </button>
           </form>
 
-          <p className="auth-pro-bottom">
-            Already have an account? <Link to="/login">Login</Link>
+          <p className="auth-fit-bottom">
+            Already have account? <Link to="/login">Login</Link>
           </p>
         </div>
       </div>
